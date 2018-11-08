@@ -1,14 +1,13 @@
 package com.jfinal;
 
+import com.alibaba.druid.sql.dialect.db2.visitor.DB2ASTVisitor;
 import com.huawei.User;
 import com.jfinal.kit.PropKit;
-import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.c3p0.C3p0Plugin;
+import com.jfinal.plugin.activerecord.*;
 import com.jfinal.plugin.druid.DruidPlugin;
+import sun.security.util.BitArray;
 
-import java.io.FileInputStream;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -44,12 +43,20 @@ public class JfinalTestDb {
         System.out.println(User.dao.findById(8).get("name").toString());
         User user = User.dao.findByIdLoadColumns("8", "name,age");
         System.out.println(user.get("name").toString());
-        Integer  age = user.get("age");
+        Integer age = user.get("age");
         System.out.println(age);
         System.out.println("分布查询");
 
+        Page<Record> userPage = Db.paginate(1, 10, "select * ", "from user where age > ?", 30);
+        List<Record> list = userPage.getList();
+        for(Record record:list){
+
+            System.out.println(record.get("name").toString());
+        }
+
         List<Record> records = Db.find("select * from user where age > 20");
-        
+        System.out.println(records.size());
+
 
 
     }
